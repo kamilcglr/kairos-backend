@@ -55,7 +55,15 @@ export default class User extends BaseModel {
   @beforeSave()
   public static async hashPassword(user: User) {
     if (user.$dirty.password && user.password) {
-      user.password = await Hash.make(user.password)
+      const hash = await Hash.make(user.password)
+      // The phc-argon2 package does not respect the specification
+      // https://github.com/simonepri/phc-argon2/issues/56
+      // The order of the hash must be v,m,t,p
+      let splintedHash = hash.split('$')
+      let partToOrder = splintedHash[3].split(',')
+      partToOrder = [partToOrder[1], partToOrder[0], partToOrder[2]]
+      splintedHash[3] = partToOrder.join(',')
+      user.password = splintedHash.join('$')
     }
   }
 }

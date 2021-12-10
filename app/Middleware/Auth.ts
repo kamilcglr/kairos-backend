@@ -26,7 +26,9 @@ export default class Auth {
       ctx.logger.error(e)
       return ctx.response.internalServerError({ message: 'Internal server error' })
     }
-    ctx.user = user
+    ctx.auth = {
+      user: user,
+    }
     return await next()
   }
 }

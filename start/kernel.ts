@@ -44,4 +44,5 @@ Server.middleware.registerNamed({
   auth: () => import('App/Middleware/Auth'),
   level: () => import('App/Middleware/Level'),
   prohibit: () => import('App/Middleware/Prohibit'),
+  access: () => import('App/Middleware/Access'),
 })

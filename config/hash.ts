@@ -46,10 +46,10 @@ const hashConfig: HashConfig = {
     argon: {
       driver: 'argon2',
       variant: 'id',
-      iterations: 3,
-      memory: 4096,
+      memory: 1 << 12,
       parallelism: 1,
       saltSize: 16,
+      iterations: 10,
     },
 
     /*
