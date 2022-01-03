@@ -8,6 +8,7 @@ import {
   HasMany,
 } from '@ioc:Adonis/Lucid/Orm'
 import Hash from '@ioc:Adonis/Core/Hash'
+import Task from 'App/Models/app/Task'
 
 export enum Role {
   ADMIN = 'ADMIN',
@@ -30,6 +31,12 @@ export default class User extends BaseModel {
     localKey: 'id',
   })
   public users: HasMany<typeof User>
+
+  @hasMany(() => Task, {
+    foreignKey: 'userId',
+    localKey: 'id',
+  })
+  public tasks: HasMany<typeof Task>
 
   @column({ columnName: 'id', isPrimary: true })
   public id: number

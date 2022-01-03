@@ -11,3 +11,8 @@ Route.delete('/api/users/:user_id', 'UserController.delete')
   .middleware(['auth', 'level:ADMIN,MANAGER', 'access:user'])
 
 Route.get('/api/users', 'UserController.getAll').middleware(['auth', 'level:ADMIN'])
+Route.get('/api/users/:user_id', 'UserController.get').middleware([
+  'auth',
+  'level:ADMIN,MANAGER,USER',
+  'access:user',
+])

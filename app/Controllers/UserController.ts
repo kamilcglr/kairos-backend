@@ -35,7 +35,7 @@ export default class UserController {
         role: schema.enum.optional(['MANAGER', 'USER']),
         manager_id: schema.number.optional([
           rules.exists({
-            table: 'app.sensor_type',
+            table: 'app.kairos_user',
             column: 'id',
             where: {
               role: Role.MANAGER,
@@ -86,7 +86,7 @@ export default class UserController {
         role: schema.enum.optional(['MANAGER', 'USER']),
         manager_id: schema.number.optional([
           rules.exists({
-            table: 'app.sensor_type',
+            table: 'app.kairos_user',
             column: 'id',
             where: {
               role: Role.MANAGER,
