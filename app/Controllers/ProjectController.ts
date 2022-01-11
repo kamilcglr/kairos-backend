@@ -43,12 +43,14 @@ export default class ProjectController {
     })
 
     try {
-      await ctx.project.merge({
-        name: payload.name,
-        description: payload.description,
-      })
+      await ctx.project
+        .merge({
+          name: payload.name,
+          description: payload.description,
+        })
+        .save()
 
-      return ctx.response.created(ctx.project)
+      return ctx.response.ok(ctx.project)
     } catch (e) {
       ctx.logger.error(e)
       return ctx.response.internalServerError()

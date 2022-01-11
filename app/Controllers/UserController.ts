@@ -3,6 +3,14 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User, { Role } from 'App/Models/app/User'
 
 export default class UserController {
+  public async getAuthenticatedUser(ctx: HttpContextContract) {
+    try {
+      return ctx.response.ok(ctx.auth.user)
+    } catch (e) {
+      ctx.logger.error(e)
+      return ctx.response.internalServerError()
+    }
+  }
   public async getAll(ctx: HttpContextContract) {
     try {
       const users = await User.query().preload('manager')
@@ -101,18 +109,20 @@ export default class UserController {
     })
 
     try {
-      const updatedUser = await ctx.user.merge({
-        firstname: payload.firstname,
-        lastname: payload.lastname,
-        email: payload.email,
-        password: payload.password,
-        managerId: isAdmin(ctx)
-          ? payload.manager_id || null
-          : isManager(ctx)
-          ? ctx.auth.user.id
-          : ctx.user.managerId,
-        role: isAdmin(ctx) ? payload.role : Role.USER,
-      })
+      const updatedUser = await ctx.user
+        .merge({
+          firstname: payload.firstname,
+          lastname: payload.lastname,
+          email: payload.email,
+          password: payload.password,
+          managerId: isAdmin(ctx)
+            ? payload.manager_id || null
+            : isManager(ctx)
+            ? ctx.auth.user.id
+            : ctx.user.managerId,
+          role: isAdmin(ctx) ? payload.role : Role.USER,
+        })
+        .save()
 
       return ctx.response.ok(updatedUser)
     } catch (e) {

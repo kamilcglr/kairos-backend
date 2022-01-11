@@ -50,12 +50,14 @@ export default class TaskController {
     })
 
     try {
-      await ctx.task.merge({
-        name: payload.name,
-        description: payload.description,
-        start: payload.start,
-        end: payload.end,
-      })
+      await ctx.task
+        .merge({
+          name: payload.name,
+          description: payload.description,
+          start: payload.start,
+          end: payload.end,
+        })
+        .save()
       return ctx.response.ok(ctx.task)
     } catch (e) {
       ctx.logger.error(e)

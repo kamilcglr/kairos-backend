@@ -4,11 +4,13 @@ import {
   belongsTo,
   BelongsTo,
   column,
+  computed,
   hasMany,
   HasMany,
 } from '@ioc:Adonis/Lucid/Orm'
 import Hash from '@ioc:Adonis/Core/Hash'
 import Task from 'App/Models/app/Task'
+import FrozenMonth from 'App/Models/app/FrozenMonth'
 
 export enum Role {
   ADMIN = 'ADMIN',
@@ -38,6 +40,12 @@ export default class User extends BaseModel {
   })
   public tasks: HasMany<typeof Task>
 
+  @hasMany(() => FrozenMonth, {
+    foreignKey: 'userId',
+    localKey: 'id',
+  })
+  public frozenMonths: HasMany<typeof FrozenMonth>
+
   @column({ columnName: 'id', isPrimary: true })
   public id: number
 
@@ -59,6 +67,14 @@ export default class User extends BaseModel {
   @column({ columnName: 'manager_id' })
   public managerId: number | null
 
+  @computed()
+  public get full_name() {
+    return `${this.firstname} ${this.lastname}`
+  }
+  @computed()
+  public get initials() {
+    return this.firstname[0] + this.lastname[0]
+  }
   @beforeSave()
   public static async hashPassword(user: User) {
     if (user.$dirty.password && user.password) {
