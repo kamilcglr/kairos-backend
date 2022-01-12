@@ -1,3 +1,5 @@
+resources/reports/*
+
 node_modules
 build
 coverage

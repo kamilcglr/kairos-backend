@@ -58,7 +58,7 @@ export default class ReportController {
   public async getReports(ctx: HttpContextContract) {
     try {
       await ctx.user.load('frozenMonths')
-      return ctx.response.created(ctx.user)
+      return ctx.response.created(ctx.user.frozenMonths)
     } catch (e) {
       ctx.logger.error(e)
       return ctx.response.internalServerError()
@@ -194,7 +194,7 @@ class PdfCreator {
       .font('Helvetica')
       .text('Manager:', 300, customerInformationTop)
       .font('Helvetica-Bold')
-      .text(data.user.manager.full_name, 350, customerInformationTop)
+      .text(data.user.manager?.full_name || '-', 350, customerInformationTop)
       .moveDown()
 
     this.generateHr(252)
