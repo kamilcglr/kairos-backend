@@ -17,3 +17,8 @@ Route.get('/api/projects/:project_id/tasks/:task_id', 'TaskController.get')
   .where('project_id', Route.matchers.number())
   .where('task_id', Route.matchers.number())
   .middleware(['auth', 'level:ADMIN,MANAGER,USER', 'access:project', 'access:task'])
+
+Route.delete('/api/projects/:project_id/tasks/:task_id', 'TaskController.delete')
+  .where('project_id', Route.matchers.number())
+  .where('task_id', Route.matchers.number())
+  .middleware(['auth', 'level:ADMIN,MANAGER,USER', 'access:project', 'access:task'])

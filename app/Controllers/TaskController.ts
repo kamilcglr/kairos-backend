@@ -94,4 +94,17 @@ export default class TaskController {
       return ctx.response.internalServerError()
     }
   }
+
+  public async delete(ctx: HttpContextContract) {
+    try {
+      if (ctx.task.frozenMonthId) {
+        return ctx.response.forbidden({ message: 'This task is in a frozen month.' })
+      }
+      await ctx.task.delete()
+      return ctx.response.noContent()
+    } catch (e) {
+      ctx.logger.error(e)
+      return ctx.response.internalServerError()
+    }
+  }
 }
