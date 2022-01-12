@@ -33,7 +33,12 @@ export default class ProjectController {
     const payload = await ctx.request.validate({
       schema: schema.create({
         name: schema.string({ trim: true }, [
-          rules.unique({ table: 'app.project', column: 'name', caseInsensitive: true }),
+          rules.unique({
+            table: 'app.project',
+            column: 'name',
+            caseInsensitive: true,
+            whereNot: { id: ctx.project.id },
+          }),
         ]),
         description: schema.string(),
       }),
