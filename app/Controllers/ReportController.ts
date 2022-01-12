@@ -299,8 +299,9 @@ class PdfCreator {
   }
 
   private static getTime(from: DateTime, end: DateTime): string {
-    return `From ${from.toLocaleString(DateTime.DATETIME_SHORT)}
-To ${end.toLocaleString(DateTime.DATETIME_SHORT)}`
+    return `${from.toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)}, ${from.toFormat(
+      'HH:mm'
+    )} - ${end.toFormat('HH:mm')}`
   }
 }
 
