@@ -1,0 +1,4 @@
+11,Cloud computing,Amazon web services projects,
+12,Big Data,"Hadoop, Python",
+10,NoSQL,NoSQL database projects,
+9,Projet Kanban,Springboot REST API,
