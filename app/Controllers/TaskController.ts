@@ -19,11 +19,20 @@ export default class TaskController {
         name: schema.string(),
         description: schema.string.optional(),
         start: schema.date(),
-        end: schema.date({}, [rules.afterField('start')]),
+        end: schema.date({}, [rules.afterField('start'), rules.before(1, 'seconds')]),
       }),
     })
 
     try {
+      await ctx.auth.user.load('frozenMonths')
+      if (
+        ctx.auth.user.frozenMonths
+          .map((f) => f.month.startOf('month'))
+          .some((month) => month.equals(payload.start.startOf('month')))
+      ) {
+        return ctx.response.forbidden({ message: 'This month is frozen.' })
+      }
+
       const task = await Task.create({
         name: payload.name,
         description: payload.description,
@@ -50,6 +59,18 @@ export default class TaskController {
     })
 
     try {
+      await ctx.auth.user.load('frozenMonths')
+      if (ctx.task.frozenMonthId) {
+        return ctx.response.forbidden({ message: 'This task is frozen.' })
+      }
+      if (
+        ctx.auth.user.frozenMonths
+          .map((f) => f.month.startOf('month'))
+          .some((month) => month.equals(payload.start.startOf('month')))
+      ) {
+        return ctx.response.forbidden({ message: 'This month is frozen.' })
+      }
+
       await ctx.task
         .merge({
           name: payload.name,
