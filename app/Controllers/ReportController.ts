@@ -7,6 +7,7 @@ import { DateTime, Duration } from 'luxon'
 import Drive from '@ioc:Adonis/Core/Drive'
 import { extname } from 'path'
 import FrozenMonth from 'App/Models/app/FrozenMonth'
+import Database from '@ioc:Adonis/Lucid/Database'
 
 export default class ReportController {
   public async generatePDF(ctx: HttpContextContract) {
@@ -27,8 +28,13 @@ export default class ReportController {
         return ctx.response.forbidden({ message: `${payload.month} is already frozen` })
       }
 
+      // create transaction to rollback if there is an issue during pdf creation
+      const trx = await Database.transaction()
+      ctx.user.useTransaction(trx)
+
       // get all tasks of user during the month
-      const tasks = await Task.query()
+      const tasks = await Task.query({ client: trx })
+        .where('userId', ctx.user.id)
         .where('start', '>', payload.month.startOf('month').toISO())
         .where('start', '<', payload.month.endOf('month').toISO())
         .preload('project')
@@ -41,14 +47,23 @@ export default class ReportController {
         tasks,
       })
 
-      await ctx.user.related('frozenMonths').create({
+      // create the frozen month
+      const frozenMonth = await ctx.user.related('frozenMonths').create({
         month: payload.month.startOf('month'),
         userId: ctx.user.id,
         path: path,
       })
 
-      await ctx.user.load('frozenMonths')
-      return ctx.response.created(ctx.user)
+      await Task.query({ client: trx })
+        .where('userId', ctx.user.id)
+        .where('start', '>', payload.month.startOf('month').toISO())
+        .where('start', '<', payload.month.endOf('month').toISO())
+        .update({ frozenMonthId: frozenMonth.id })
+        .preload('project')
+
+      await trx.commit()
+      await frozenMonth.load('tasks')
+      return ctx.response.created(frozenMonth)
     } catch (e) {
       ctx.logger.error(e)
       return ctx.response.internalServerError()
@@ -57,7 +72,7 @@ export default class ReportController {
 
   public async getReports(ctx: HttpContextContract) {
     try {
-      await ctx.user.load('frozenMonths')
+      await ctx.user.load('frozenMonths', (query) => query.preload('tasks'))
       return ctx.response.created(ctx.user.frozenMonths)
     } catch (e) {
       ctx.logger.error(e)
