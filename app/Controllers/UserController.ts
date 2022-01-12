@@ -151,7 +151,3 @@ function isAdmin(ctx): boolean {
 function isManager(ctx): boolean {
   return ctx.auth.user.role === Role.MANAGER
 }
-
-function isUser(ctx): boolean {
-  return ctx.auth.user.role === Role.USER
-}
