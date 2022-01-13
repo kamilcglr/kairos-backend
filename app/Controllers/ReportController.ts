@@ -40,7 +40,10 @@ export default class ReportController {
         .preload('project')
 
       const pdf = new PdfCreator()
-      const path = `${payload.month.toISODate()}-${ctx.user.full_name.replace(' ', '_')}.pdf`
+      const path = `reports/${payload.month.toISODate()}-${ctx.user.full_name.replace(
+        ' ',
+        '_'
+      )}.pdf`
       await pdf.createReport(path, {
         month: payload.month,
         user: ctx.user,
