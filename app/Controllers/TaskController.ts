@@ -5,7 +5,7 @@ import { rules, schema } from '@ioc:Adonis/Core/Validator'
 export default class TaskController {
   public async getUserTasks(ctx: HttpContextContract) {
     try {
-      const tasks = await Task.query().where('userId', ctx.user.id)
+      const tasks = await Task.query().where('userId', ctx.user.id).orderBy('start', 'desc')
       return ctx.response.ok(tasks)
     } catch (e) {
       ctx.logger.error(e)
