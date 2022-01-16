@@ -20,13 +20,18 @@ export default class ManagerController {
       }),
     })
     try {
-      const users = await User.query().where('id', payload.params.manager_id).preload('users')
-      return ctx.response.ok(users)
+      const manager = await User.query()
+        .where('id', payload.params.manager_id)
+        .preload('users', (users) => users.preload('tasks'))
+        .firstOrFail()
+
+      return ctx.response.ok(manager.users)
     } catch (e) {
       ctx.logger.error(e)
       return ctx.response.internalServerError()
     }
   }
+
   public async getAllTasksOfUsers(ctx: HttpContextContract) {
     const payload = await ctx.request.validate({
       schema: schema.create({

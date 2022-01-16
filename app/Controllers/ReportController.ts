@@ -75,7 +75,9 @@ export default class ReportController {
 
   public async getReports(ctx: HttpContextContract) {
     try {
-      await ctx.user.load('frozenMonths', (query) => query.preload('tasks'))
+      await ctx.user.load('frozenMonths', (query) =>
+        query.preload('tasks').orderBy('month', 'desc')
+      )
       return ctx.response.created(ctx.user.frozenMonths)
     } catch (e) {
       ctx.logger.error(e)

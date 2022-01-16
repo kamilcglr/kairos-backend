@@ -13,7 +13,7 @@ export default class UserController {
   }
   public async getAll(ctx: HttpContextContract) {
     try {
-      const users = await User.query().preload('manager')
+      const users = await User.query().preload('manager').preload('users')
       return ctx.response.ok(users)
     } catch (e) {
       ctx.logger.error(e)
@@ -38,9 +38,9 @@ export default class UserController {
         firstname: schema.string(),
         lastname: schema.string(),
         password: schema.string({}, [
-          rules.regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[()#?!@$%^&*+\-_]).{8,}$/),
+          // rules.regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[()#?!@$%^&*+\-_]).{8,}$/),
         ]),
-        role: schema.enum.optional(['MANAGER', 'USER']),
+        role: schema.enum.optional(['ADMIN', 'MANAGER', 'USER']),
         manager_id: schema.number.optional([
           rules.exists({
             table: 'app.kairos_user',
@@ -88,9 +88,6 @@ export default class UserController {
         ]),
         firstname: schema.string.optional(),
         lastname: schema.string.optional(),
-        password: schema.string.optional({}, [
-          rules.regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[()#?!@$%^&*+\-_]).{8,}$/),
-        ]),
         role: schema.enum.optional(['MANAGER', 'USER']),
         manager_id: schema.number.optional([
           rules.exists({
@@ -114,7 +111,6 @@ export default class UserController {
           firstname: payload.firstname,
           lastname: payload.lastname,
           email: payload.email,
-          password: payload.password,
           managerId: isAdmin(ctx)
             ? payload.manager_id || null
             : isManager(ctx)

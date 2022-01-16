@@ -59,12 +59,12 @@ export default class TaskController {
     })
 
     try {
-      await ctx.auth.user.load('frozenMonths')
+      await ctx.task.load('user', (user) => user.preload('frozenMonths'))
       if (ctx.task.frozenMonthId) {
         return ctx.response.forbidden({ message: 'This task is frozen.' })
       }
       if (
-        ctx.auth.user.frozenMonths
+        ctx.task.user.frozenMonths
           .map((f) => f.month.startOf('month'))
           .some((month) => month.equals(payload.start.startOf('month')))
       ) {
