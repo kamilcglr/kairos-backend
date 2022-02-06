@@ -88,7 +88,7 @@ export default class UserController {
         ]),
         firstname: schema.string.optional(),
         lastname: schema.string.optional(),
-        role: schema.enum.optional(['MANAGER', 'USER']),
+        role: schema.enum.optional(['ADMIN', 'MANAGER', 'USER']),
         manager_id: schema.number.optional([
           rules.exists({
             table: 'app.kairos_user',
