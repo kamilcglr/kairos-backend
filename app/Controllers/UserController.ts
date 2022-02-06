@@ -119,6 +119,7 @@ export default class UserController {
           role: isAdmin(ctx) ? payload.role : Role.USER,
         })
         .save()
+      await ctx.user.refresh()
 
       return ctx.response.ok(updatedUser)
     } catch (e) {

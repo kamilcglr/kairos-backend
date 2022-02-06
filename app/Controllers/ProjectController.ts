@@ -32,7 +32,7 @@ export default class ProjectController {
   public async update(ctx: HttpContextContract) {
     const payload = await ctx.request.validate({
       schema: schema.create({
-        name: schema.string({ trim: true }, [
+        name: schema.string.optional({ trim: true }, [
           rules.unique({
             table: 'app.project',
             column: 'name',
@@ -40,7 +40,7 @@ export default class ProjectController {
             whereNot: { id: ctx.project.id },
           }),
         ]),
-        description: schema.string(),
+        description: schema.string.optional(),
       }),
       messages: {
         'name.unique': 'Project with the same email already exists',
