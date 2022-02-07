@@ -5,8 +5,8 @@
 ![Lines](https://img.shields.io/badge/lines-73.4%25-green.svg?style=flat)
 
 ### Prerequisites
-- node (https://nodejs.org/en/)
-- git
+- Node (https://nodejs.org/en/)
+- Git
 - PostgresSQL
 - MinIO (or any S3 service)
 
